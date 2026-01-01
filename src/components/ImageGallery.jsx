@@ -17,6 +17,18 @@ export default function ImageGallery() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint is 768px
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Auto-rotate images every 5 seconds
   useEffect(() => {
@@ -90,38 +102,32 @@ export default function ImageGallery() {
             />
           ))}
           
-          {/* Navigation Arrows */}
-          {images.length > 1 && (
+          {/* Navigation Arrows - Only show on desktop */}
+          {images.length > 1 && !isMobile && (
             <>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+              <button
                 onClick={goToPrevious}
-                className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-gray-900/90 hover:bg-gray-900 text-white p-3 md:p-2 rounded-full shadow-lg transition-all border border-gray-700 z-10 touch-manipulation"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-900/90 hover:bg-gray-900 active:opacity-80 text-white p-2 rounded-full shadow-lg transition-opacity border border-gray-700 z-10"
                 aria-label="Previous image"
               >
-                <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button
                 onClick={goToNext}
-                className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-gray-900/90 hover:bg-gray-900 text-white p-3 md:p-2 rounded-full shadow-lg transition-all border border-gray-700 z-10 touch-manipulation"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-900/90 hover:bg-gray-900 active:opacity-80 text-white p-2 rounded-full shadow-lg transition-opacity border border-gray-700 z-10"
                 aria-label="Next image"
               >
-                <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
-              </motion.button>
+                <ChevronRight className="w-6 h-6" />
+              </button>
             </>
           )}
           
-          {/* Dots Indicator */}
-          {images.length > 1 && (
+          {/* Dots Indicator - Only show on desktop */}
+          {images.length > 1 && !isMobile && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
               {images.map((_, index) => (
-                <motion.button
+                <button
                   key={index}
-                  whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.9 }}
                   onClick={() => goToSlide(index)}
                   className={`h-2 rounded-full transition-all ${
                     index === currentIndex
